@@ -1,0 +1,14 @@
+POST https://vkpns.rustore.ru/v1/projects/{{project}}/messages:send HTTP/2
+Content-Type: application/json
+Authorization: Bearer {{bearer}}
+
+{
+   "message":{
+      "token": "{{token}}",
+      "notification":{
+        "body":"This is an rustore notification!",
+        "title":"Deploy",
+        "image":"https://image-hosting.org/284239234.jpeg"
+      }
+   }
+}

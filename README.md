@@ -1,6 +1,7 @@
 # flutter_rustore_push
 
-Flutter RuStore push SDK для подключения пуш уведомлений.
+Форк официального Flutter RuStore push SDK.
+
 
 ## Общее
 
