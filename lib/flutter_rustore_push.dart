@@ -1,60 +1,70 @@
-import 'package:flutter_rustore_push/pigeons/rustore.dart';
+import 'package:flutter_rustore_push/pigeons/rustore_push.dart';
 
-typedef void Callback(dynamic value);
+class RustorePushCallbacks extends RuStorePushCallbacks {
+  RustorePushCallbacks({
+    this.onDeletedMessages,
+    this.onError,
+    this.onMessageReceived,
+    this.onNewToken,
+  });
+
+  Function? onDeletedMessages;
+  Function? onError;
+  Function? onMessageReceived;
+  Function? onNewToken;
+
+  @override
+  Future<void> deletedMessages() async {
+    if (onDeletedMessages != null) {
+      onDeletedMessages!();
+    }
+  }
+
+  @override
+  Future<void> error(String err) async {
+    if (onError != null) {
+      onError!(err);
+    }
+  }
+
+  @override
+  Future<void> messageReceived(Message message) async {
+    if (onMessageReceived != null) {
+      onMessageReceived!(message);
+    }
+  }
+
+  @override
+  Future<void> newToken(String token) async {
+    if (onNewToken != null) {
+      onNewToken!(token);
+    }
+  }
+}
 
 class RustorePushClient {
-  static final _api = RustorePush();
+  static final _api = RuStorePush();
+
+  static void setup() {}
+
+  static Future<void> attachCallbacks({
+    Function? onDeletedMessages,
+    Function? onError,
+    Function? onMessageReceived,
+    Function? onNewToken,
+  }) async {
+    RuStorePushCallbacks.setup(RustorePushCallbacks(
+      onDeletedMessages: onDeletedMessages,
+      onError: onError,
+      onMessageReceived: onMessageReceived,
+      onNewToken: onNewToken,
+    ));
+
+    return;
+  }
 
   static Future<bool> available() async {
     return _api.available();
-  }
-
-  static onNewToken(Callback success, {Callback? error}) async {
-    try {
-      var resp = await _api.onNewToken();
-      success(resp);
-    } catch (err) {
-      if (error != null) {
-        error(err);
-      }
-    }
-    onNewToken(success, error: error);
-  }
-
-  static onMessageReceived(Callback success, {Callback? error}) async {
-    try {
-      var resp = await _api.onMessageReceived();
-      success(resp);
-    } catch (err) {
-      if (error != null) {
-        error(err);
-      }
-    }
-    onMessageReceived(success, error: error);
-  }
-
-  static onDeletedMessages(Callback success, {Callback? error}) async {
-    try {
-      await _api.onDeletedMessages();
-      success(null);
-    } catch (err) {
-      if (error != null) {
-        error(err);
-      }
-    }
-    onDeletedMessages(success, error: error);
-  }
-
-  static onError(Function success, {Function? error}) async {
-    try {
-      var resp = await _api.onError();
-      success(resp);
-    } catch (err) {
-      if (error != null) {
-        error(err);
-      }
-    }
-    onError(success, error: error);
   }
 
   static Future<String> getToken() async {
@@ -63,5 +73,13 @@ class RustorePushClient {
 
   static Future<void> deleteToken() async {
     return _api.deleteToken();
+  }
+
+  static Future<void> subscibeToTopic(String topicName) async {
+    return _api.subscribeToTopic(topicName);
+  }
+
+  static Future<void> unsubscribeFromTopic(String topicName) async {
+    return _api.unsubscribeFromTopic(topicName);
   }
 }

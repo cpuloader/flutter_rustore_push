@@ -1,20 +1,16 @@
 package ru.rustore.flutter_rustore_push
 
-import android.app.Application
 import android.content.Context
 import androidx.annotation.NonNull
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import ru.rustore.flutter_rustore_billing.utils.Log
-import ru.rustore.flutter_rustore_push.pigeons.Rustore
-import ru.rustore.flutter_rustore_push.utils.Resource
-import ru.rustore.sdk.pushclient.RuStorePushClient
-import ru.rustore.sdk.pushclient.common.logger.DefaultLogger
+import ru.rustore.flutter_rustore_push.utils.Log
+import ru.rustore.flutter_rustore_push.pigeons.RuStorePush
+import ru.rustore.flutter_rustore_push.pigeons.RuStorePushCallbacks
 
 /** RustorePushPlugin */
 class FlutterRustorePushPlugin : FlutterPlugin {
     private lateinit var context: Context
-    private lateinit var application: Application
 
     override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         context = binding.applicationContext
@@ -23,12 +19,13 @@ class FlutterRustorePushPlugin : FlutterPlugin {
             "Trying to resolve Application from Context: ${context.javaClass.name}"
         )
 
-        application = context as Application
+        val rustore = FlutterRustorePushClient()
+        val callbacks = RuStorePushCallbacks(binding.binaryMessenger)
 
-        val rustore = FlutterRustorePushClient(application)
+        FlutterRustorePushService.client = callbacks
 
-        FlutterRustorePushService.client = rustore
-        Rustore.RustorePush.setup(binding.binaryMessenger, rustore)
+        RuStorePush.setUp(binding.binaryMessenger, rustore)
+
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {

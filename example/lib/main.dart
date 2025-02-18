@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rustore_push/flutter_rustore_push.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,36 @@ class _MyAppState extends State<MyApp> {
   }
 
   void initPush() {
+    RustorePushClient.attachCallbacks(onNewToken: (value) {
+      final item = "on new token success: ${value}";
+
+      print(item);
+
+      setState(() {
+        stack.add(item);
+        token = value;
+      });
+    }, onMessageReceived: (value) {
+      final item =
+          "on message received success: id=${value.messageId}, data=${value.data}, notification.body: ${value.notification?.body}";
+
+      print(item);
+
+      setState(() {
+        stack.add(item);
+      });
+    }, onDeletedMessages: () {
+      print("on delete message");
+    }, onError: (value) {
+      final item = "on error: ${value}";
+
+      print(item);
+
+      setState(() {
+        stack.add(item);
+      });
+    });
+
     RustorePushClient.getToken().then((value) {
       final item = "get token success: ${value}";
 
@@ -55,62 +86,17 @@ class _MyAppState extends State<MyApp> {
         stack.add(item);
       });
     });
-
-    RustorePushClient.onNewToken((value) {
-      final item = "on new token success: ${value}";
-
-      print(item);
-
-      setState(() {
-        stack.add(item);
-        token = value;
-      });
-    }, error: (err) {
-      final item = "on new token err: ${err}";
-
-      print(item);
-
-      setState(() {
-        stack.add(item);
-      });
-    });
-
-    RustorePushClient.onMessageReceived((value) {
-      final item = "on message received success: id=${value.messageId}, data=${value.data}, notification.body: ${value.notification?.body}";
-
-      print(item);
-
-      setState(() {
-        stack.add(item);
-      });
-    }, error: (err) {
-      final item = "on message received error: ${err}";
-
-      print(item);
-
-      setState(() {
-        stack.add(item);
-      });
-    });
-
-    RustorePushClient.onError((value) {
-      final item = "on error: ${value}";
-
-      print(item);
-
-      setState(() {
-        stack.add(item);
-      });
-    });
   }
 
-  var project = "jYqD02VNCyrXKvlyLv3sCwCPkjlFCvqy";
-  var bearer = "kVmEIcP93JXJzO-GFFn9MZ0JSqwuRSfzfNA5XOF130PwI8htgHSxyHZ0Pn3b00ea";
+  var project = "projectID";
+  var serviceToken =
+      "CubILkB-PWdxO8vWrFQ3WKjPKqSWQoeDMStTdU-T5PIOYKyMAt-0w3EWE2tjNOD7";
 
-  void send(String token) {
-    final body = """{
+  void send(String deviceToken) async {
+    if (await Permission.notification.isGranted) {
+      final body = """{
    "message":{
-      "token": "${token}",
+      "token": "$deviceToken",
       "notification":{
         "body":"This is an rustore notification!",
         "title":"Message",
@@ -119,21 +105,25 @@ class _MyAppState extends State<MyApp> {
    }
 }""";
 
-    print(body);
+      print(body);
 
-    http
-        .post(
-      Uri.parse('https://vkpns.rustore.ru/v1/projects/${project}/messages:send'),
-      headers: {
-        'Authorization': 'Bearer ${bearer}',
-      },
-      body: body,
-    )
-        .then((resp) {
-      print(resp.statusCode);
-      print(resp.body);
-      print(resp);
-    });
+      http
+          .post(
+        Uri.parse(
+            'https://vkpns.rustore.ru/v1/projects/${project}/messages:send'),
+        headers: {
+          'Authorization': 'Bearer $serviceToken',
+        },
+        body: body,
+      )
+          .then((resp) {
+        print(resp.statusCode);
+        print(resp.body);
+        print(resp);
+      });
+    } else {
+      Permission.notification.request();
+    }
   }
 
   @override

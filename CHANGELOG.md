@@ -1,3 +1,32 @@
+## 6.5.0
+* Updated RuStore push SDK to 6.5.0.
+* Add support gradle 8
+
+## 6.3.1
+* Updated RuStore push SDK to 6.3.1.
+
+## 6.3.0
+* Updated RuStore push SDK to 6.3.0.
+
+## 6.1.1
+
+* Fixed initialization via manifest
+
+## 6.1.0
+
+* Updated RuStore push SDK to 6.1.0.
+
+## 6.0.0
+
+* Updated RuStore push SDK to 6.0.0.
+* Changed initialization logic.
+
+## 2.0.0
+
+* Updated pigeon plugin
+* Updated RuStore push SDK to 1.2.0.
+* Changed initialization logic
+
 ## 1.0.0
 
 * Updated RuStore push SDK to 1.0.0.

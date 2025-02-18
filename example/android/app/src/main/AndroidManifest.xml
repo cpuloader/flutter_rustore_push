@@ -1,9 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="ru.rustore.flutter_rustore_push_example">
+    xmlns:tools="http://schemas.android.com/tools">
    <application
         android:label="flutter_rustore_push_example"
-        android:name=".Application"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name="ru.rustore.flutter_rustore_push_example.MainActivity"
@@ -31,5 +29,8 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+       <meta-data
+           android:name="ru.rustore.sdk.pushclient.project_id"
+           android:value="N4WMBiriSKlIk0TjbBIqiIrWkT2i7OyC" />
     </application>
 </manifest>
