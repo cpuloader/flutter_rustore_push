@@ -10,6 +10,8 @@ import ru.rustore.sdk.pushclient.messaging.exception.RuStorePushClientException
 import ru.rustore.sdk.pushclient.messaging.model.RemoteMessage
 import ru.rustore.sdk.pushclient.messaging.service.RuStoreMessagingService
 
+import android.content.Context
+import android.content.SharedPreferences
 
 class FlutterRustorePushService : RuStoreMessagingService() {
     companion object {
@@ -54,6 +56,18 @@ class FlutterRustorePushService : RuStoreMessagingService() {
 
         uiThreadHandler.post {
             client?.messageReceived(msg) { }
+        }
+
+        saveToPreferences(message.data)
+    }
+
+    fun saveToPreferences(data: Map<String, String>) {
+        val sharedPreferences: SharedPreferences = this.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+        with (sharedPreferences.edit()) {
+            for ((key, value) in data) {
+                putString("flutter.$key", value)
+            }
+            apply()
         }
     }
 
